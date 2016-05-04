@@ -12,5 +12,18 @@
 */
 
 Route::get('/', function () {
-    return view('welcome');
+    return "Nothing Rocks yet !!";
 });
+
+// Authentication Routes...
+Route::post('login', 'Auth\AuthController@login');
+Route::get('logout', 'Auth\AuthController@logout');
+
+// Registration Routes...
+Route::post('register', 'Auth\AuthController@register');
+Route::get('/home', 'HomeController@index');
+
+Route::get('/auth/google','Auth\AuthController@redirectToProvider');
+Route::get('/auth/callback','Auth\AuthController@handleProviderCallback');
+
+
