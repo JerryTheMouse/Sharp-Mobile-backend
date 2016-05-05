@@ -58,32 +58,29 @@ class AuthController extends Controller
     public function redirectToProvider(Request $request)
     {
         $code = $request->json()->get('code');
-        $token  = Socialite::driver('google')->getAccessToken($code);
-        $socialite_user  = Socialite::driver('google')->userFromToken($token);
+        $token = Socialite::driver('google')->getAccessToken($code);
+        $socialite_user = Socialite::driver('google')->userFromToken($token);
         $google_id = $socialite_user->getId();
-        if(!is_null($user = User::where('email',$socialite_user->getEmail())->first()))
-        {
+        if (!is_null($user = User::where('email', $socialite_user->getEmail())->first())) {
             $user->google_id = $google_id;
             $user->save();
             return $this->createJWTTokenFromUser($user);
-        }
-        else {
+        } else {
             $faker = \Faker\Factory::create();
 
             $data = [
-                'fname' => explode(' ',$socialite_user->getName())[0],
-                'lname' => explode(' ',$socialite_user->getName())[1],
+                'fname' => explode(' ', $socialite_user->getName())[0],
+                'lname' => explode(' ', $socialite_user->getName())[1],
                 'email' => $socialite_user->getEmail(),
                 'password' => bcrypt($faker->password),
                 'google_id' => $google_id
             ];
             $user = $this->create($data);
-            return $this->createJWTTokenFromUser( $user);
+            return $this->createJWTTokenFromUser($user);
 
         }
 
     }
-
 
 
     /**
@@ -125,7 +122,7 @@ class AuthController extends Controller
             );
         }
         $user = $this->create($request->all());
-        return $this->createJWTTokenFromUser( $user);
+        return $this->createJWTTokenFromUser($user);
 
     }
 
