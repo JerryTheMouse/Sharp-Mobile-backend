@@ -28,8 +28,17 @@ class AuthController extends Controller
      */
     public function __construct()
     {
-//        $this->middleware($this->guestMiddleware(), ['except' => 'logout','redirectToProvider','handleProviderCallback']);
+        $this->middleware('api.guest', ['except' => 'logout']);
+        $this->middleware('jwt.auth', ['only' => 'logout']);
     }
+
+
+    public function logout(Request $request)
+    {
+        \JWTAuth::invalidate();
+        return response()->json('You have logged out');
+    }
+
 
     public function login(Request $request)
     {
