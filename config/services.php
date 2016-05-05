@@ -37,7 +37,7 @@ return [
     'google' => [
         'client_id' => '252821449381-rc1ahu2a7it8f8v8554glo4fd54nf95j.apps.googleusercontent.com',
         'client_secret' => 'pCs2OLED7D_jUTo4aysYyzLU',
-        'redirect' => 'http://localhost:8000/auth/callback'
+        'redirect' => 'http://job-sample.dev'
     ]
 
 ];

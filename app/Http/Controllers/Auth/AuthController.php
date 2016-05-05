@@ -51,26 +51,40 @@ class AuthController extends Controller
 
 
     /**
-     * Redirect the user to the GitHub authentication page.
+     * Retrieves  the user token from  the Google servers via code.
      *
      * @return Response
      */
-    public function redirectToProvider()
+    public function redirectToProvider(Request $request)
     {
-        return Socialite::driver('google')->redirect();
+        $code = $request->json()->get('code');
+        $token  = Socialite::driver('google')->getAccessToken($code);
+        $socialite_user  = Socialite::driver('google')->userFromToken($token);
+        $google_id = $socialite_user->getId();
+        if(!is_null($user = User::where('email',$socialite_user->getEmail())->first()))
+        {
+            $user->google_id = $google_id;
+            $user->save();
+            return $this->createJWTTokenFromUser($user);
+        }
+        else {
+            $faker = \Faker\Factory::create();
+
+            $data = [
+                'fname' => explode(' ',$socialite_user->getName())[0],
+                'lname' => explode(' ',$socialite_user->getName())[1],
+                'email' => $socialite_user->getEmail(),
+                'password' => bcrypt($faker->password),
+                'google_id' => $google_id
+            ];
+            $user = $this->create($data);
+            return $this->createJWTTokenFromUser( $user);
+
+        }
+
     }
 
-    /**
-     * Obtain the user information from GitHub.
-     *
-     * @return Response
-     */
-    public function handleProviderCallback()
-    {
-        $user = Socialite::driver('google')->user();
-        return $user->getName();
-        // $user->token;
-    }
+
 
     /**
      * Get a validator for an incoming registration request.
@@ -88,7 +102,7 @@ class AuthController extends Controller
         ]);
     }
 
-    protected function authenticated($request, $user)
+    protected function createJWTTokenFromUser($user)
     {
         $token = \JWTAuth::fromUser($user);
         return response()->json(compact('token'));
@@ -111,7 +125,7 @@ class AuthController extends Controller
             );
         }
         $user = $this->create($request->all());
-        return $this->authenticated($request, $user);
+        return $this->createJWTTokenFromUser( $user);
 
     }
 
@@ -128,6 +142,7 @@ class AuthController extends Controller
             'lname' => $data['lname'],
             'email' => $data['email'],
             'password' => bcrypt($data['password']),
+            'google_id' => $data['google_id']
         ]);
     }
 }
