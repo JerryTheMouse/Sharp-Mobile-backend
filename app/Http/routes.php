@@ -27,6 +27,9 @@ Route::group(["prefix"=>"api"],function(){
 
     Route::post('auth/google','Auth\AuthController@redirectToProvider');
 
+    Route::get('users', ['middleware'=>'jwt.auth',function(){
+        return \App\User::all();
+    }]);
 
 
 });
