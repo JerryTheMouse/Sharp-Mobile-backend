@@ -152,6 +152,7 @@ return [
         'Tymon\JWTAuth\Providers\JWTAuthServiceProvider',
 
         Barryvdh\LaravelIdeHelper\IdeHelperServiceProvider::class,
+        Irazasyed\JwtAuthGuard\JwtAuthGuardServiceProvider::class,
 
 
 
