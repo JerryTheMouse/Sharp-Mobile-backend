@@ -148,7 +148,7 @@ class AuthController extends Controller
             'lname' => $data['lname'],
             'email' => $data['email'],
             'password' => bcrypt($data['password']),
-            'google_id' => $data['google_id']
+            'google_id' => array_get($data,'google_id',null)
         ]);
     }
 }
