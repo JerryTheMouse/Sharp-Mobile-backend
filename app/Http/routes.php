@@ -17,7 +17,9 @@ Route::group(["prefix"=>"api"],function(){
     Route::get('/', function () {
         return "Nothing Rocks yet !!";
     });
-
+    Route::group(["prefix"=>"auth"],function (){
+    
+    
 // Authentication Routes...
     Route::post('login', 'Auth\AuthController@login');
     Route::get('logout', 'Auth\AuthController@logout');
@@ -25,8 +27,10 @@ Route::group(["prefix"=>"api"],function(){
 // Registration Routes...
     Route::post('register', 'Auth\AuthController@register');
 
-    Route::post('auth/google','Auth\AuthController@redirectToProvider');
+    Route::post('google','Auth\AuthController@redirectToProvider');
 
+    
+    });
     Route::get('users', ['middleware'=>'jwt.auth',function(){
         return \App\User::all();
     }]);
